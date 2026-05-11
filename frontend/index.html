@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Tracking</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        h1 {
+            color: #2E4057;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .buscador {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus { border-color: #1A6B8A; }
+
+        button {
+            padding: 12px 24px;
+            background: #2E4057;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+
+        button:hover { background: #1A6B8A; }
+
+        .courier-detectado {
+            text-align: center;
+            font-size: 13px;
+            color: #1A6B8A;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .historial-titulo {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .historial-lista {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .historial-item {
+            background: #f0f4f8;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2E4057;
+        }
+
+        .historial-item:hover { background: #dce8f0; }
+
+        #resultado { display: none; }
+
+        .estado-card {
+            border: 2px solid #e8f4f8;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8fbfd;
+        }
+
+        .estado-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            background: #1A6B8A;
+            color: white;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .info-row:last-child { border-bottom: none; }
+        .label { color: #888; }
+        .valor { color: #2E4057; font-weight: bold; }
+
+        .timeline {
+            margin-top: 20px;
+            border-top: 2px solid #e8f4f8;
+            padding-top: 16px;
+        }
+
+        .timeline-titulo {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #1A6B8A;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .timeline-texto { font-size: 13px; color: #444; }
+        .timeline-fecha { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+        .error {
+            text-align: center;
+            color: #e74c3c;
+            padding: 20px;
+            background: #fdf0f0;
+            border-radius: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #1A6B8A;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚢 Sistema de Tracking</h1>
+        <p class="subtitulo">Seguimiento de embarques internacionales</p>
+
+        <div class="buscador">
+            <input 
+                type="text" 
+                id="inputTracking" 
+                placeholder="Ingresá tu número de tracking..."
+            >
+            <button onclick="buscarTracking()">🔍 Buscar</button>
+        </div>
+
+        <div id="historialTitulo" class="historial-titulo" style="display:none">
+            Búsquedas recientes:
+        </div>
+        <div class="historial-lista" id="historialLista"></div>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        let historial = JSON.parse(localStorage.getItem('historial') || '[]');
+        renderHistorial();
+
+        function renderHistorial() {
+            const lista = document.getElementById('historialLista');
+            const titulo = document.getElementById('historialTitulo');
+            lista.innerHTML = '';
+            if (historial.length > 0) {
+                titulo.style.display = 'block';
+                historial.slice(0, 5).forEach(item => {
+                    const chip = document.createElement('span');
+                    chip.className = 'historial-item';
+                    chip.textContent = `${item.numero} · ${item.courier.toUpperCase()}`;
+                    chip.onclick = () => {
+                        document.getElementById('inputTracking').value = item.numero;
+                        buscarTracking();
+                    };
+                    lista.appendChild(chip);
+                });
+            }
+        }
+
+        function guardarHistorial(numero, courier) {
+            historial = historial.filter(i => i.numero !== numero);
+            historial.unshift({ numero, courier });
+            if (historial.length > 5) historial.pop();
+            localStorage.setItem('historial', JSON.stringify(historial));
+            renderHistorial();
+        }
+
+        async function buscarTracking() {
+            const numero = document.getElementById('inputTracking').value.trim();
+            const resultado = document.getElementById('resultado');
+
+            if (!numero) {
+                resultado.style.display = 'block';
+                resultado.innerHTML = '<div class="error">⚠️ Ingresá un número de tracking</div>';
+                return;
+            }
+
+            resultado.style.display = 'block';
+            resultado.innerHTML = '<div class="loading">🔍 Detectando courier y buscando envío...</div>';
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/tracking/${numero}`);
+                const data = await response.json();
+
+                if (data.data && data.data.length > 0) {
+                    const envio = data.data[0];
+                    const courierDetectado = data.courier_detectado || '-';
+                    guardarHistorial(numero, courierDetectado);
+
+                    const eventos = envio.origin_info?.trackinfo || [];
+
+                    resultado.innerHTML = `
+                        <div class="courier-detectado">
+                            📦 Courier detectado automáticamente: <strong>${courierDetectado.toUpperCase()}</strong>
+                        </div>
+                        <div class="estado-card">
+                            <div class="estado-header">
+                                <strong>${envio.tracking_number}</strong>
+                                <span class="badge">${envio.delivery_status || 'En tránsito'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Courier</span>
+                                <span class="valor">${courierDetectado.toUpperCase()}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Origen</span>
+                                <span class="valor">${envio.origin_country || '-'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Destino</span>
+                                <span class="valor">${envio.destination_country || '-'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Último evento</span>
+                                <span class="valor">${envio.latest_event || '-'}</span>
+                            </div>
+                            ${eventos.length > 0 ? `
+                            <div class="timeline">
+                                <div class="timeline-titulo">Historial del envío:</div>
+                                ${eventos.slice(0, 5).map(e => `
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <div>
+                                            <div class="timeline-texto">${e.checkpoint_message}</div>
+                                            <div class="timeline-fecha">${e.checkpoint_date}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    resultado.innerHTML = '<div class="error">❌ No se encontró información para ese número de tracking</div>';
+                }
+            } catch (error) {
+                resultado.innerHTML = '<div class="error">❌ Error al conectar con el servidor</div>';
+            }
+        }
+
+        document.getElementById('inputTracking').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') buscarTracking();
+        });
+    </script>
+</body>
+</html>
