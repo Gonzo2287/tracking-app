@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from dotenv import load_dotenv
 import requests
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = "hv2ah2tm-65ta-mpuq-glsy-y37vl5odt0n1"
+API_KEY = os.getenv("API_KEY")
 
 @app.route('/tracking/<numero>')
 def tracking(numero):
@@ -24,7 +28,7 @@ def tracking(numero):
     if detect_data.get("data") and len(detect_data["data"]) > 0:
         courier_code = detect_data["data"][0]["courier_code"]
 
-    # Paso 3: consultar el tracking con el courier detectado
+    # Paso 3: consultar el tracking
     track_url = "https://api.trackingmore.com/v4/trackings"
     track_body = {
         "tracking_number": numero,
@@ -32,8 +36,6 @@ def tracking(numero):
     }
     track_response = requests.post(track_url, headers=headers, json=track_body)
     result = track_response.json()
-
-    # Agregar el courier detectado a la respuesta
     result["courier_detectado"] = courier_code
     return jsonify(result)
 
