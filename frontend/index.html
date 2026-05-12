@@ -255,7 +255,7 @@
             resultado.innerHTML = '<div class="loading">🔍 Detectando courier y buscando envío...</div>';
 
             try {
-                const response = await fetch(`http://127.0.0.1:5000/tracking/${numero}`);
+                const response = await fetch(`https://tracking-app-ja25.onrender.com/tracking/${numero}`);
                 const data = await response.json();
 
                 if (data.data && data.data.length > 0) {
