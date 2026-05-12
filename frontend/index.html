@@ -4,86 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --navy: #1a2744;
+            --teal: #1A6B8A;
+            --teal-light: #2589ad;
+            --accent: #e8f4f8;
+            --white: #ffffff;
+            --gray: #6b7a8d;
+            --light-bg: #f0f4f8;
+            --border: #dde4ed;
+            --success: #1A6B8A;
+            --error-bg: #fdf0f0;
+            --error: #e74c3c;
+            --card-shadow: 0 8px 40px rgba(26,39,68,0.10);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f0f4f8;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light-bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            padding: 24px 16px 48px;
         }
 
         .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: var(--white);
+            padding: clamp(24px, 5vw, 48px);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
             width: 100%;
-            max-width: 650px;
+            max-width: 640px;
+            margin-top: clamp(16px, 5vh, 60px);
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header-icon {
+            font-size: clamp(36px, 8vw, 52px);
+            display: block;
+            margin-bottom: 8px;
         }
 
         h1 {
-            color: #2E4057;
-            text-align: center;
-            margin-bottom: 8px;
-            font-size: 28px;
+            font-family: 'Syne', sans-serif;
+            color: var(--navy);
+            font-size: clamp(22px, 5vw, 32px);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
         }
 
         .subtitulo {
-            text-align: center;
-            color: #888;
-            margin-bottom: 30px;
-            font-size: 14px;
+            color: var(--gray);
+            font-size: clamp(13px, 2.5vw, 15px);
+            margin-top: 6px;
+            font-weight: 300;
         }
 
+        /* SEARCH */
         .buscador {
             display: flex;
             gap: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         input {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
+            min-width: 0;
+            padding: clamp(10px, 2.5vw, 14px) clamp(12px, 3vw, 18px);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: clamp(13px, 3vw, 15px);
+            font-family: 'DM Sans', sans-serif;
             outline: none;
-            transition: border-color 0.3s;
+            color: var(--navy);
+            background: #fafbfd;
+            transition: border-color 0.25s, box-shadow 0.25s;
         }
 
-        input:focus { border-color: #1A6B8A; }
+        input::placeholder { color: #a0aab8; }
+
+        input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(26,107,138,0.10);
+            background: var(--white);
+        }
 
         button {
-            padding: 12px 24px;
-            background: #2E4057;
+            padding: clamp(10px, 2.5vw, 14px) clamp(16px, 4vw, 28px);
+            background: var(--navy);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: clamp(13px, 3vw, 15px);
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.25s, transform 0.1s;
             white-space: nowrap;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        button:hover { background: #1A6B8A; }
+        button:hover { background: var(--teal); }
+        button:active { transform: scale(0.97); }
 
-        .courier-detectado {
-            text-align: center;
-            font-size: 13px;
-            color: #1A6B8A;
-            margin-bottom: 16px;
-            font-style: italic;
-        }
-
+        /* HISTORIAL */
         .historial-titulo {
-            font-size: 13px;
-            color: #aaa;
+            font-size: 12px;
+            color: #a0aab8;
             margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
         }
 
         .historial-lista {
@@ -94,25 +139,39 @@
         }
 
         .historial-item {
-            background: #f0f4f8;
-            border: 1px solid #ddd;
+            background: var(--accent);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 13px;
+            padding: 5px 14px;
+            font-size: 12px;
             cursor: pointer;
-            transition: background 0.2s;
-            color: #2E4057;
+            transition: background 0.2s, border-color 0.2s;
+            color: var(--navy);
+            font-weight: 500;
         }
 
-        .historial-item:hover { background: #dce8f0; }
+        .historial-item:hover {
+            background: #d0e8f2;
+            border-color: var(--teal);
+        }
 
+        /* RESULTADO */
         #resultado { display: none; }
 
+        .courier-detectado {
+            text-align: center;
+            font-size: 13px;
+            color: var(--teal);
+            margin-bottom: 14px;
+            font-style: italic;
+        }
+
+        /* CARD */
         .estado-card {
-            border: 2px solid #e8f4f8;
-            border-radius: 10px;
-            padding: 20px;
-            background: #f8fbfd;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: clamp(16px, 4vw, 24px);
+            background: #fafbfd;
         }
 
         .estado-header {
@@ -120,93 +179,181 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tracking-number {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            color: var(--navy);
+            font-size: clamp(13px, 3vw, 16px);
+            word-break: break-all;
         }
 
         .badge {
-            padding: 6px 14px;
+            padding: 5px 14px;
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            background: #1A6B8A;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+            background: var(--navy);
             color: white;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 4px;
         }
 
-        .info-row:last-child { border-bottom: none; }
-        .label { color: #888; }
-        .valor { color: #2E4057; font-weight: bold; }
+        @media (max-width: 400px) {
+            .info-grid { grid-template-columns: 1fr; }
+        }
 
+        .info-cell {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .info-cell.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .label {
+            font-size: 11px;
+            color: #a0aab8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .valor {
+            color: var(--navy);
+            font-weight: 600;
+            font-size: clamp(13px, 3vw, 14px);
+        }
+
+        /* TIMELINE */
         .timeline {
-            margin-top: 20px;
-            border-top: 2px solid #e8f4f8;
+            margin-top: 18px;
+            border-top: 1.5px solid var(--border);
             padding-top: 16px;
         }
 
         .timeline-titulo {
-            font-size: 13px;
-            color: #aaa;
-            margin-bottom: 12px;
+            font-size: 11px;
+            color: #a0aab8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            margin-bottom: 14px;
         }
 
         .timeline-item {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 14px;
+            margin-bottom: 14px;
+            align-items: flex-start;
         }
 
         .timeline-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #1A6B8A;
-            margin-top: 5px;
+            background: var(--teal);
+            margin-top: 4px;
             flex-shrink: 0;
         }
 
-        .timeline-texto { font-size: 13px; color: #444; }
-        .timeline-fecha { font-size: 11px; color: #aaa; margin-top: 2px; }
+        .timeline-texto {
+            font-size: clamp(12px, 2.5vw, 13px);
+            color: #3a4a5c;
+            line-height: 1.4;
+        }
 
+        .timeline-fecha {
+            font-size: 11px;
+            color: #a0aab8;
+            margin-top: 2px;
+        }
+
+        /* ESTADOS */
         .error {
             text-align: center;
-            color: #e74c3c;
-            padding: 20px;
-            background: #fdf0f0;
-            border-radius: 8px;
+            color: var(--error);
+            padding: clamp(16px, 4vw, 24px);
+            background: var(--error-bg);
+            border-radius: 12px;
+            font-size: clamp(13px, 3vw, 15px);
+            border: 1px solid #f5c6c6;
         }
 
         .loading {
             text-align: center;
-            color: #1A6B8A;
-            padding: 20px;
+            color: var(--teal);
+            padding: clamp(16px, 4vw, 24px);
+            font-size: clamp(13px, 3vw, 15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* DIVIDER */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
+            display: none;
+        }
+
+        .divider.visible { display: block; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚢 Sistema de Tracking</h1>
-        <p class="subtitulo">Seguimiento de embarques internacionales</p>
+        <div class="header">
+            <span class="header-icon">🚢</span>
+            <h1>Sistema de Tracking</h1>
+            <p class="subtitulo">Seguimiento de embarques internacionales</p>
+        </div>
 
         <div class="buscador">
             <input 
                 type="text" 
                 id="inputTracking" 
-                placeholder="Ingresá tu número de tracking..."
+                placeholder="Número de tracking..."
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
             >
             <button onclick="buscarTracking()">🔍 Buscar</button>
         </div>
 
-        <div id="historialTitulo" class="historial-titulo" style="display:none">
-            Búsquedas recientes:
-        </div>
+        <div id="historialTitulo" class="historial-titulo" style="display:none">Recientes</div>
         <div class="historial-lista" id="historialLista"></div>
 
+        <hr class="divider" id="divider">
         <div id="resultado"></div>
     </div>
 
@@ -244,15 +391,18 @@
         async function buscarTracking() {
             const numero = document.getElementById('inputTracking').value.trim();
             const resultado = document.getElementById('resultado');
+            const divider = document.getElementById('divider');
 
             if (!numero) {
                 resultado.style.display = 'block';
+                divider.classList.add('visible');
                 resultado.innerHTML = '<div class="error">⚠️ Ingresá un número de tracking</div>';
                 return;
             }
 
             resultado.style.display = 'block';
-            resultado.innerHTML = '<div class="loading">🔍 Detectando courier y buscando envío...</div>';
+            divider.classList.add('visible');
+            resultado.innerHTML = '<div class="loading"><div class="spinner"></div> Detectando courier y buscando envío...</div>';
 
             try {
                 const response = await fetch(`https://tracking-app-ja25.onrender.com/tracking/${numero}`);
@@ -267,32 +417,39 @@
 
                     resultado.innerHTML = `
                         <div class="courier-detectado">
-                            📦 Courier detectado automáticamente: <strong>${courierDetectado.toUpperCase()}</strong>
+                            📦 Courier detectado: <strong>${courierDetectado.toUpperCase()}</strong>
                         </div>
                         <div class="estado-card">
                             <div class="estado-header">
-                                <strong>${envio.tracking_number}</strong>
+                                <span class="tracking-number">${envio.tracking_number}</span>
                                 <span class="badge">${envio.delivery_status || 'En tránsito'}</span>
                             </div>
-                            <div class="info-row">
-                                <span class="label">Courier</span>
-                                <span class="valor">${courierDetectado.toUpperCase()}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Origen</span>
-                                <span class="valor">${envio.origin_country || '-'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Destino</span>
-                                <span class="valor">${envio.destination_country || '-'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Último evento</span>
-                                <span class="valor">${envio.latest_event || '-'}</span>
+                            <div class="info-grid">
+                                <div class="info-cell">
+                                    <div class="label">Courier</div>
+                                    <div class="valor">${courierDetectado.toUpperCase()}</div>
+                                </div>
+                                <div class="info-cell">
+                                    <div class="label">Estado</div>
+                                    <div class="valor">${envio.delivery_status || '-'}</div>
+                                </div>
+                                <div class="info-cell">
+                                    <div class="label">Origen</div>
+                                    <div class="valor">${envio.origin_country || '-'}</div>
+                                </div>
+                                <div class="info-cell">
+                                    <div class="label">Destino</div>
+                                    <div class="valor">${envio.destination_country || '-'}</div>
+                                </div>
+                                ${envio.latest_event ? `
+                                <div class="info-cell full-width">
+                                    <div class="label">Último evento</div>
+                                    <div class="valor">${envio.latest_event}</div>
+                                </div>` : ''}
                             </div>
                             ${eventos.length > 0 ? `
                             <div class="timeline">
-                                <div class="timeline-titulo">Historial del envío:</div>
+                                <div class="timeline-titulo">Historial del envío</div>
                                 ${eventos.slice(0, 5).map(e => `
                                     <div class="timeline-item">
                                         <div class="timeline-dot"></div>
