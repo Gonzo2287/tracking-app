@@ -426,6 +426,9 @@
         document.getElementById('inputTracking').addEventListener('keypress', e => {
             if (e.key === 'Enter') buscarTracking();
         });
+        document.getElementById('inputTracking').addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
     </script>
 </body>
 </html>
