@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking App — Iniciar sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2744;
+            --teal: #1A6B8A;
+            --white: #ffffff;
+            --gray: #6b7a8d;
+            --light-bg: #f0f4f8;
+            --border: #dde4ed;
+            --error: #e74c3c;
+            --card-shadow: 0 8px 40px rgba(26,39,68,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 420px;
+            padding: clamp(28px, 6vw, 48px);
+            animation: fadeUp 0.4s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+
+        .logo h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: -0.5px;
+        }
+
+        .logo p {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            background: var(--light-bg);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray);
+            border: none;
+            background: none;
+        }
+
+        .tab.active {
+            background: var(--white);
+            color: var(--navy);
+            box-shadow: 0 2px 8px rgba(26,39,68,0.08);
+        }
+
+        /* FORM */
+        .form { display: none; }
+        .form.active { display: block; }
+
+        .field { margin-bottom: 16px; }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--navy);
+            background: #fafbfd;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(26,107,138,0.10);
+            background: var(--white);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 13px;
+            background: var(--navy);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 4px;
+        }
+
+        .btn-primary:hover { background: var(--teal); }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: #c0c8d4;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background: var(--white);
+            color: var(--navy);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            border-color: var(--teal);
+            box-shadow: 0 2px 8px rgba(26,107,138,0.10);
+        }
+
+        .google-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .msg {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .msg.error { background: #fdf0f0; color: var(--error); border: 1px solid #f5c6c6; display: block; }
+        .msg.success { background: #eafaf1; color: #27ae60; border: 1px solid #a9dfbf; display: block; }
+
+        .forgot {
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 16px;
+        }
+
+        .forgot a {
+            font-size: 12px;
+            color: var(--teal);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgot a:hover { text-decoration: underline; }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .loading-overlay.show { display: flex; }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+<div class="card">
+    <div class="logo">
+        <span class="logo-icon">🚢</span>
+        <h1>Sistema de Tracking</h1>
+        <p>Seguimiento multimodal de embarques</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('login')">Iniciar sesión</button>
+        <button class="tab" onclick="switchTab('register')">Registrarse</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="form active" id="formLogin">
+        <div class="field">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email">
+        </div>
+        <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="forgot"><a onclick="resetPassword()">¿Olvidaste tu contraseña?</a></div>
+        <button class="btn-primary" onclick="loginEmail()">Iniciar sesión</button>
+        <div class="divider">o</div>
+        <button class="btn-google" onclick="loginGoogle()">
+            <svg class="google-icon" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continuar con Google
+        </button>
+        <div class="msg" id="loginMsg"></div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="form" id="formRegister">
+        <div class="field">
+            <label>Nombre</label>
+            <input type="text" id="registerName" placeholder="Tu nombre completo">
+        </div>
+        <div class="field">
+            <label>Email</label>
+            <input type="email" id="registerEmail" placeholder="tu@email.com" autocomplete="email">
+        </div>
+        <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+        <button class="btn-primary" onclick="registerEmail()">Crear cuenta</button>
+        <div class="divider">o</div>
+        <button class="btn-google" onclick="loginGoogle()">
+            <svg class="google-icon" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Registrarse con Google
+        </button>
+        <div class="msg" id="registerMsg"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCaSZZ-wXYLlOz82a2pMkpdrfrVsJdj8fc",
+        authDomain: "tracking-app-39733.firebaseapp.com",
+        projectId: "tracking-app-39733",
+        storageBucket: "tracking-app-39733.firebasestorage.app",
+        messagingSenderId: "402581264579",
+        appId: "1:402581264579:web:1093ff1059a8a60020aa76"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Si ya está logueado, redirigir al dashboard
+    onAuthStateChanged(auth, user => {
+        if (user) window.location.href = 'dashboard.html';
+    });
+
+    function showLoading(show) {
+        document.getElementById('loadingOverlay').classList.toggle('show', show);
+    }
+
+    function showMsg(id, text, type) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = `msg ${type}`;
+    }
+
+    function translateError(code) {
+        const map = {
+            'auth/user-not-found': 'No existe una cuenta con ese email.',
+            'auth/wrong-password': 'Contraseña incorrecta.',
+            'auth/invalid-email': 'Email inválido.',
+            'auth/email-already-in-use': 'Ese email ya está registrado.',
+            'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+            'auth/too-many-requests': 'Demasiados intentos. Intentá más tarde.',
+            'auth/popup-closed-by-user': 'Cerraste el popup de Google.',
+            'auth/invalid-credential': 'Email o contraseña incorrectos.',
+        };
+        return map[code] || 'Ocurrió un error. Intentá de nuevo.';
+    }
+
+    window.switchTab = function(tab) {
+        document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1)));
+        document.getElementById('formLogin').classList.toggle('active', tab === 'login');
+        document.getElementById('formRegister').classList.toggle('active', tab === 'register');
+    };
+
+    window.loginEmail = async function() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        if (!email || !password) return showMsg('loginMsg', 'Completá todos los campos.', 'error');
+        showLoading(true);
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            window.location.href = 'dashboard.html';
+        } catch (e) {
+            showLoading(false);
+            showMsg('loginMsg', translateError(e.code), 'error');
+        }
+    };
+
+    window.registerEmail = async function() {
+        const name = document.getElementById('registerName').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+        if (!name || !email || !password) return showMsg('registerMsg', 'Completá todos los campos.', 'error');
+        showLoading(true);
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(cred.user, { displayName: name });
+            window.location.href = 'dashboard.html';
+        } catch (e) {
+            showLoading(false);
+            showMsg('registerMsg', translateError(e.code), 'error');
+        }
+    };
+
+    window.loginGoogle = async function() {
+        showLoading(true);
+        try {
+            await signInWithPopup(auth, provider);
+            window.location.href = 'dashboard.html';
+        } catch (e) {
+            showLoading(false);
+            showMsg('loginMsg', translateError(e.code), 'error');
+        }
+    };
+
+    window.resetPassword = async function() {
+        const email = document.getElementById('loginEmail').value.trim();
+        if (!email) return showMsg('loginMsg', 'Ingresá tu email primero.', 'error');
+        try {
+            await sendPasswordResetEmail(auth, email);
+            showMsg('loginMsg', 'Te enviamos un email para restablecer tu contraseña.', 'success');
+        } catch (e) {
+            showMsg('loginMsg', translateError(e.code), 'error');
+        }
+    };
+
+    // Enter key support
+    document.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+            if (document.getElementById('formLogin').classList.contains('active')) window.loginEmail();
+            else window.registerEmail();
+        }
+    });
+</script>
+</body>
+</html>

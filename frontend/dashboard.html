@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Sistema de Tracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2744;
+            --teal: #1A6B8A;
+            --white: #ffffff;
+            --gray: #6b7a8d;
+            --light-bg: #f0f4f8;
+            --border: #dde4ed;
+            --card-shadow: 0 4px 20px rgba(26,39,68,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light-bg);
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: var(--navy);
+            padding: 0 clamp(16px, 4vw, 40px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 16px rgba(26,39,68,0.15);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .navbar-brand span { font-size: 22px; }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 400;
+            display: none;
+        }
+
+        @media (min-width: 480px) { .user-name { display: block; } }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .btn-logout {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+        /* MAIN */
+        .main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: clamp(24px, 4vw, 40px) clamp(16px, 4vw, 24px);
+        }
+
+        .welcome {
+            margin-bottom: 28px;
+        }
+
+        .welcome h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(20px, 4vw, 26px);
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .welcome p { font-size: 14px; color: var(--gray); font-weight: 300; }
+
+        /* NEW TRACKING CARD */
+        .new-tracking-card {
+            background: var(--navy);
+            border-radius: 16px;
+            padding: clamp(20px, 4vw, 28px);
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .new-tracking-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            opacity: 0.9;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: white;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input::placeholder { color: rgba(255,255,255,0.4); }
+        .search-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); }
+
+        .btn-search {
+            padding: 11px 20px;
+            background: var(--teal);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-search:hover { background: #2589ad; }
+        .btn-search:active { transform: scale(0.97); }
+
+        /* SECTION */
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        /* SHIPMENT LIST */
+        .shipments-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+
+        .shipment-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+            text-decoration: none;
+        }
+
+        .shipment-card:hover {
+            border-color: var(--teal);
+            box-shadow: 0 4px 16px rgba(26,107,138,0.10);
+            transform: translateY(-1px);
+        }
+
+        .shipment-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .shipment-info { flex: 1; min-width: 0; }
+
+        .shipment-number {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--navy);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .shipment-meta {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 3px;
+        }
+
+        .shipment-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+            background: var(--light-bg);
+            color: var(--navy);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .shipment-remove {
+            background: none;
+            border: none;
+            color: #c0c8d4;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .shipment-remove:hover { color: var(--error, #e74c3c); background: #fdf0f0; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+            background: var(--white);
+            border: 1.5px dashed var(--border);
+            border-radius: 14px;
+            margin-bottom: 24px;
+        }
+
+        .empty-icon { font-size: 36px; margin-bottom: 12px; }
+        .empty-state h4 { font-family: 'Syne', sans-serif; font-size: 15px; color: var(--navy); margin-bottom: 6px; }
+        .empty-state p { font-size: 13px; font-weight: 300; }
+
+        /* LOADING */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .loading-overlay.show { display: flex; }
+        .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--navy);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            transition: transform 0.3s;
+            z-index: 200;
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav class="navbar">
+    <a class="navbar-brand" href="dashboard.html">
+        <span>🚢</span> TrackingApp
+    </a>
+    <div class="navbar-user">
+        <span class="user-name" id="userName"></span>
+        <div class="avatar" id="userAvatar">?</div>
+        <button class="btn-logout" onclick="logout()">Salir</button>
+    </div>
+</nav>
+
+<main class="main">
+    <div class="welcome">
+        <h2 id="welcomeMsg">Bienvenido 👋</h2>
+        <p>Tus envíos activos y recientes</p>
+    </div>
+
+    <!-- NUEVA BÚSQUEDA -->
+    <div class="new-tracking-card">
+        <h3>🔍 Rastrear nuevo envío</h3>
+        <div class="search-row">
+            <input class="search-input" type="text" id="newTracking"
+                placeholder="Número de tracking..."
+                autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+            <button class="btn-search" onclick="goToTracking()">Buscar</button>
+        </div>
+    </div>
+
+    <!-- ENVÍOS GUARDADOS -->
+    <div class="section-title">Mis envíos</div>
+    <div id="shipmentsList"></div>
+</main>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCaSZZ-wXYLlOz82a2pMkpdrfrVsJdj8fc",
+        authDomain: "tracking-app-39733.firebaseapp.com",
+        projectId: "tracking-app-39733",
+        storageBucket: "tracking-app-39733.firebasestorage.app",
+        messagingSenderId: "402581264579",
+        appId: "1:402581264579:web:1093ff1059a8a60020aa76"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async user => {
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+        currentUser = user;
+        const name = user.displayName || user.email.split('@')[0];
+        document.getElementById('userName').textContent = name;
+        document.getElementById('userAvatar').textContent = name[0].toUpperCase();
+        document.getElementById('welcomeMsg').textContent = `Hola, ${name.split(' ')[0]} 👋`;
+        await loadShipments();
+    });
+
+    async function loadShipments() {
+        const container = document.getElementById('shipmentsList');
+        try {
+            const q = query(collection(db, 'shipments'), where('userId', '==', currentUser.uid));
+            const snap = await getDocs(q);
+            const shipments = [];
+            snap.forEach(d => shipments.push({ id: d.id, ...d.data() }));
+            shipments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+            if (shipments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h4>No tenés envíos guardados</h4>
+                        <p>Buscá un número de tracking para empezar</p>
+                    </div>`;
+                return;
+            }
+
+            const transportIcon = { air: '✈️', sea: '🚢', land: '🚛' };
+
+            container.innerHTML = `<div class="shipments-list">${shipments.map(s => `
+                <div class="shipment-card" onclick="openTracking('${s.trackingNumber}')">
+                    <span class="shipment-icon">${transportIcon[s.transportType] || '📦'}</span>
+                    <div class="shipment-info">
+                        <div class="shipment-number">${s.trackingNumber}</div>
+                        <div class="shipment-meta">${s.courier ? s.courier.toUpperCase() : 'Courier desconocido'} · ${s.savedAt || 'Guardado'}</div>
+                    </div>
+                    <span class="shipment-badge">${s.status || 'En tránsito'}</span>
+                    <button class="shipment-remove" onclick="removeShipment(event, '${s.id}')" title="Eliminar">✕</button>
+                </div>
+            `).join('')}</div>`;
+
+        } catch (e) {
+            container.innerHTML = `<div class="empty-state"><p>Error al cargar envíos</p></div>`;
+        }
+    }
+
+    window.openTracking = function(numero) {
+        window.location.href = `index.html?tracking=${numero}`;
+    };
+
+    window.goToTracking = function() {
+        const numero = document.getElementById('newTracking').value.trim().toUpperCase();
+        if (!numero) return showToast('Ingresá un número de tracking');
+        window.location.href = `index.html?tracking=${numero}`;
+    };
+
+    window.removeShipment = async function(e, id) {
+        e.stopPropagation();
+        try {
+            await deleteDoc(doc(db, 'shipments', id));
+            showToast('Envío eliminado');
+            await loadShipments();
+        } catch (err) {
+            showToast('Error al eliminar');
+        }
+    };
+
+    window.logout = async function() {
+        await signOut(auth);
+        window.location.href = 'login.html';
+    };
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    document.getElementById('newTracking').addEventListener('keypress', e => {
+        if (e.key === 'Enter') window.goToTracking();
+    });
+
+    document.getElementById('newTracking').addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+</script>
+</body>
+</html>
